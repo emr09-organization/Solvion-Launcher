@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSSupportsGameMode</key>
-	<true/>
-	<key>NSApplicationCrashOnExceptions</key>
-	<true/>
 	<key>GCSupportedGameControllers</key>
 	<array>
 		<dict>
@@ -13,6 +9,10 @@
 			<string>ExtendedGamepad</string>
 		</dict>
 	</array>
+	<key>LSSupportsGameMode</key>
+	<true/>
+	<key>NSApplicationCrashOnExceptions</key>
+	<true/>
 	<key>SUFeedURL</key>
 	<string>https://dl.getmythic.app/updates/update.xml</string>
 	<key>SUPublicEDKey</key>

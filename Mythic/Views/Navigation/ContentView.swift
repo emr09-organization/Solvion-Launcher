@@ -1,4 +1,3 @@
-//
 //  ContentView.swift
 //  Mythic
 //
@@ -62,6 +61,22 @@ struct ContentView: View {
                             Label("Accounts", systemImage: "person.2")
                                 .help("View all currently signed in accounts")
                         }
+                        
+                        // --- Added Steam Button ---
+                        Button(action: {
+                            // Open Steam app or perform action
+                            print("Steam pressed")
+                        }) {
+                            HStack {
+                                Image("Steam")           // Your Steam icon in Assets
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 16, height: 16) // Match other sidebar icons
+                                Text("Steam")
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .help("Launch Steam")
                     } header: {
                         Text("Management")
                     }
