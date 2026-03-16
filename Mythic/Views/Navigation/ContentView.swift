@@ -18,7 +18,7 @@ struct ContentView: View {
     
     @ObservedObject private var updateController: SparkleUpdateController = .shared
     @Bindable private var operationManager: GameOperationManager = .shared
-
+    
     @State private var appVersion: String = .init()
     @State private var buildNumber: Int = 0
     
@@ -62,70 +62,64 @@ struct ContentView: View {
                                 .help("View all currently signed in accounts")
                         }
                         
-                        // --- Added Steam Button ---
-                        Button(action: {
-                            // Open Steam app or perform action
-                            print("Steam pressed")
-                        }) {
+                        // --- Steam ---
+                        NavigationLink(destination: SteamView()) {
                             HStack {
-                                Image("Steam")           // Your Steam icon in Assets
+                                Image("Steam")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: 16, height: 16) // Match other sidebar icons
+                                    .frame(width: 16, height: 16)
                                 Text("Steam")
                             }
                         }
-                        .buttonStyle(.plain)
-                        .help("Launch Steam")
-                    } header: {
-                        Text("Management")
-                    }
-                }
-
-                // separate downloads view from main list because alignment doesn't work within the main list
-                if !operationManager.queue.isEmpty {
-                    List { // must wrap in a list to have the same styling as the other links
-                        NavigationLink(destination: OperationsView()) {
-                            Label("Operations", systemImage: "progress.indicator")
-                                .help("View all active game operations")
-                        }
-                    }
-                    .frame(maxHeight: 40)
-                    .scrollDisabled(true)
-                    .scrollIndicators(.hidden)
-                }
-                
-#if DEBUG
-                VStack {
-                    if let shortVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
-                       let bundleVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String,
-                       let mythicVersion: SemanticVersion = .init("\(shortVersion)+\(bundleVersion)") {
-                        Text("Mythic \(mythicVersion.prettyString)")
+                        .help("Open Steam view")
                     }
                     
-                    if let engineVersion {
-                        Text("Mythic Engine \(engineVersion.prettyString)")
+                    // separate downloads view from main list because alignment doesn't work within the main list
+                    if !operationManager.queue.isEmpty {
+                        List { // must wrap in a list to have the same styling as the other links
+                            NavigationLink(destination: OperationsView()) {
+                                Label("Operations", systemImage: "progress.indicator")
+                                    .help("View all active game operations")
+                            }
+                        }
+                        .frame(maxHeight: 40)
+                        .scrollDisabled(true)
+                        .scrollIndicators(.hidden)
                     }
-                }
-                .task { @MainActor in
-                    engineVersion = await Engine.installedVersion
-                }
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .padding(.bottom)
+                    
+#if DEBUG
+                    VStack {
+                        if let shortVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+                           let bundleVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String,
+                           let mythicVersion: SemanticVersion = .init("\(shortVersion)+\(bundleVersion)") {
+                            Text("Mythic \(mythicVersion.prettyString)")
+                        }
+                        
+                        if let engineVersion {
+                            Text("Mythic Engine \(engineVersion.prettyString)")
+                        }
+                    }
+                    .task { @MainActor in
+                        engineVersion = await Engine.installedVersion
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .padding(.bottom)
 #endif // DEBUG
-
-                switch updateController.state {
-                case .updateAvailable:
-                    updateBlock("Update Available", buttonText: "Show More") {
-                        updateController.checkForUpdates(userInitiated: true)
+                    
+                    switch updateController.state {
+                    case .updateAvailable:
+                        updateBlock("Update Available", buttonText: "Show More") {
+                            updateController.checkForUpdates(userInitiated: true)
+                        }
+                    case .readyToRelaunch(let acknowledgement):
+                        updateBlock("Update Ready", buttonText: "Relaunch") {
+                            acknowledgement(.update)
+                        }
+                    default:
+                        EmptyView()
                     }
-                case .readyToRelaunch(let acknowledgement):
-                    updateBlock("Update Ready", buttonText: "Relaunch") {
-                        acknowledgement(.update)
-                    }
-                default:
-                    EmptyView()
                 }
             }, detail: {
                 HomeView()
@@ -141,7 +135,7 @@ struct ContentView: View {
             }
         }
     }
-
+    
     @ViewBuilder
     private func updateBlock(_ title: String, buttonText: String, action: @escaping () -> Void) -> some View {
         VStack {
@@ -160,8 +154,8 @@ struct ContentView: View {
         .frame(maxWidth: .infinity)
     }
 }
-
 #Preview {
     ContentView()
         .environmentObject(NetworkMonitor.shared)
 }
+
