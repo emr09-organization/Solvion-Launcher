@@ -1,10 +1,22 @@
-//
-//  SteamView.swift
-//  Mythic
-//
-//  Created by emr09 on 16/03/2026.
-//
+import SwiftUI
 
-// Copyright © 2023-2025 vapidinfinity
+struct SteamView: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Hello, world!")
+                .font(.title)
+            Text("Welcome to the Steam view.")
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .padding()
+        .navigationTitle("Steam")
+    }
+}
 
+#Preview {
+    NavigationStack {
+        SteamView()
+    }
+}
 
